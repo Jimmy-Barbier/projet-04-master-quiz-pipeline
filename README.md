@@ -18,7 +18,7 @@ J'en ai fait un projet concret : une vraie chaîne de quiz, **Master Quiz**, don
 
 Le projet est construit **à la main dans la console AWS et en ligne de commande**, et il tourne **en production** : un thème est publié chaque jour sur YouTube et TikTok.
 
-> 💡 **Comment ça marche en une phrase ?** Je choisis un thème, Bedrock rédige les questions, je les relis, puis une machine à états Step Functions fait lire les questions par Polly, rend chaque clip avec FFmpeg dans des Lambda en parallèle et assemble **4 vidéos prêtes à publier**, le tout en environ 8 minutes.
+> 💡 **Comment ça marche en une phrase ?** Je choisis un thème, Bedrock rédige les questions, je les relis, puis une machine à états Step Functions fait lire les questions par Polly, rend chaque clip avec FFmpeg dans des Lambda en parallèle et assemble **3 vidéos prêtes à publier**, le tout en environ 5 à 6 minutes.
 
 **Chaîne YouTube :** [@masterquiz_fr](https://www.youtube.com/@masterquiz_fr) · **TikTok :** [@masterquiz93](https://www.tiktok.com/@masterquiz93)
 
@@ -41,7 +41,7 @@ Moi
 ┌─────────────────────────────┐        ┌──────────────────────────┐
 │ Lambda                      │──────▶ │ Amazon Bedrock           │
 │ quiz-generer-questions      │◀────── │ Claude Sonnet 4.6        │
-│ Python · 128 Mo · 3 min     │        │ profil eu. (Converse)    │
+│ Python · 12 Mo · 3 min     │        │ profil eu. (Converse)    │
 └─────────────────────────────┘        └──────────────────────────┘
  │
  │ contrôle Python + mélange des choix
