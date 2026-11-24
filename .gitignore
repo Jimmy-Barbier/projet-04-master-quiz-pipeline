@@ -1,0 +1,14 @@
+# Assets média (droits d'auteur, fichiers lourds) : à fournir dans s3://<BUCKET>/assets/
+assets/
+*.mp3
+*.mp4
+*.jpg
+*.png
+!docs/*.png
+
+# Fichiers de travail locaux
+entree.json
+out.json
+__pycache__/
+*.pyc
+.env

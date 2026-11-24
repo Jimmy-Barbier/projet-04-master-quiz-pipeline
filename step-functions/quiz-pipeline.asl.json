@@ -1,0 +1,433 @@
+{
+  "Comment": "Pipeline quiz : questions validées → voix, rendus YouTube + shorts, accroches, 4 assemblages en parallèle",
+  "StartAt": "Voix",
+  "States": {
+    "Voix": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "quiz-generer-voix",
+        "Payload.$": "$"
+      },
+      "OutputPath": "$.Payload",
+      "Next": "Rendu"
+    },
+    "Rendu": {
+      "Type": "Map",
+      "ItemsPath": "$.index",
+      "MaxConcurrency": 5,
+      "ItemSelector": {
+        "bucket.$": "$.bucket",
+        "nom.$": "$.nom",
+        "index.$": "$$.Map.Item.Value"
+      },
+      "ItemProcessor": {
+        "ProcessorConfig": {
+          "Mode": "INLINE"
+        },
+        "StartAt": "Formats",
+        "States": {
+          "Formats": {
+            "Type": "Parallel",
+            "Branches": [
+              {
+                "StartAt": "Clip",
+                "States": {
+                  "Clip": {
+                    "Type": "Task",
+                    "Resource": "arn:aws:states:::lambda:invoke",
+                    "Parameters": {
+                      "FunctionName": "quiz-rendu-clip",
+                      "Payload.$": "$"
+                    },
+                    "Retry": [
+                      {
+                        "ErrorEquals": [
+                          "Lambda.TooManyRequestsException",
+                          "Lambda.ServiceException"
+                        ],
+                        "IntervalSeconds": 3,
+                        "MaxAttempts": 4,
+                        "BackoffRate": 2
+                      }
+                    ],
+                    "OutputPath": "$.Payload",
+                    "End": true
+                  }
+                }
+              },
+              {
+                "StartAt": "ClipShort",
+                "States": {
+                  "ClipShort": {
+                    "Type": "Task",
+                    "Resource": "arn:aws:states:::lambda:invoke",
+                    "Parameters": {
+                      "FunctionName": "quiz-rendu-clip",
+                      "Payload": {
+                        "bucket.$": "$.bucket",
+                        "nom.$": "$.nom",
+                        "index.$": "$.index",
+                        "format": "short"
+                      }
+                    },
+                    "Retry": [
+                      {
+                        "ErrorEquals": [
+                          "Lambda.TooManyRequestsException",
+                          "Lambda.ServiceException"
+                        ],
+                        "IntervalSeconds": 3,
+                        "MaxAttempts": 4,
+                        "BackoffRate": 2
+                      }
+                    ],
+                    "OutputPath": "$.Payload",
+                    "End": true
+                  }
+                }
+              }
+            ],
+            "End": true
+          }
+        }
+      },
+      "ResultPath": null,
+      "Next": "Accroches"
+    },
+    "Accroches": {
+      "Type": "Parallel",
+      "Branches": [
+        {
+          "StartAt": "IntroShortP1",
+          "States": {
+            "IntroShortP1": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::lambda:invoke",
+              "Parameters": {
+                "FunctionName": "quiz-rendu-clip",
+                "Payload": {
+                  "bucket.$": "$.bucket",
+                  "nom.$": "$.nom",
+                  "type": "intro",
+                  "format": "short",
+                  "partie": 1
+                }
+              },
+              "Retry": [
+                {
+                  "ErrorEquals": [
+                    "Lambda.TooManyRequestsException",
+                    "Lambda.ServiceException"
+                  ],
+                  "IntervalSeconds": 3,
+                  "MaxAttempts": 4,
+                  "BackoffRate": 2
+                }
+              ],
+              "OutputPath": "$.Payload",
+              "End": true
+            }
+          }
+        },
+        {
+          "StartAt": "OutroShortP1",
+          "States": {
+            "OutroShortP1": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::lambda:invoke",
+              "Parameters": {
+                "FunctionName": "quiz-rendu-clip",
+                "Payload": {
+                  "bucket.$": "$.bucket",
+                  "nom.$": "$.nom",
+                  "type": "outro",
+                  "format": "short",
+                  "partie": 1
+                }
+              },
+              "Retry": [
+                {
+                  "ErrorEquals": [
+                    "Lambda.TooManyRequestsException",
+                    "Lambda.ServiceException"
+                  ],
+                  "IntervalSeconds": 3,
+                  "MaxAttempts": 4,
+                  "BackoffRate": 2
+                }
+              ],
+              "OutputPath": "$.Payload",
+              "End": true
+            }
+          }
+        },
+        {
+          "StartAt": "IntroShortP2",
+          "States": {
+            "IntroShortP2": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::lambda:invoke",
+              "Parameters": {
+                "FunctionName": "quiz-rendu-clip",
+                "Payload": {
+                  "bucket.$": "$.bucket",
+                  "nom.$": "$.nom",
+                  "type": "intro",
+                  "format": "short",
+                  "partie": 2
+                }
+              },
+              "Retry": [
+                {
+                  "ErrorEquals": [
+                    "Lambda.TooManyRequestsException",
+                    "Lambda.ServiceException"
+                  ],
+                  "IntervalSeconds": 3,
+                  "MaxAttempts": 4,
+                  "BackoffRate": 2
+                }
+              ],
+              "OutputPath": "$.Payload",
+              "End": true
+            }
+          }
+        },
+        {
+          "StartAt": "OutroShortP2",
+          "States": {
+            "OutroShortP2": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::lambda:invoke",
+              "Parameters": {
+                "FunctionName": "quiz-rendu-clip",
+                "Payload": {
+                  "bucket.$": "$.bucket",
+                  "nom.$": "$.nom",
+                  "type": "outro",
+                  "format": "short",
+                  "partie": 2
+                }
+              },
+              "Retry": [
+                {
+                  "ErrorEquals": [
+                    "Lambda.TooManyRequestsException",
+                    "Lambda.ServiceException"
+                  ],
+                  "IntervalSeconds": 3,
+                  "MaxAttempts": 4,
+                  "BackoffRate": 2
+                }
+              ],
+              "OutputPath": "$.Payload",
+              "End": true
+            }
+          }
+        },
+        {
+          "StartAt": "IntroYoutube",
+          "States": {
+            "IntroYoutube": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::lambda:invoke",
+              "Parameters": {
+                "FunctionName": "quiz-rendu-clip",
+                "Payload": {
+                  "bucket.$": "$.bucket",
+                  "nom.$": "$.nom",
+                  "type": "intro",
+                  "format": "youtube"
+                }
+              },
+              "Retry": [
+                {
+                  "ErrorEquals": [
+                    "Lambda.TooManyRequestsException",
+                    "Lambda.ServiceException"
+                  ],
+                  "IntervalSeconds": 3,
+                  "MaxAttempts": 4,
+                  "BackoffRate": 2
+                }
+              ],
+              "OutputPath": "$.Payload",
+              "End": true
+            }
+          }
+        },
+        {
+          "StartAt": "OutroYoutube",
+          "States": {
+            "OutroYoutube": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::lambda:invoke",
+              "Parameters": {
+                "FunctionName": "quiz-rendu-clip",
+                "Payload": {
+                  "bucket.$": "$.bucket",
+                  "nom.$": "$.nom",
+                  "type": "outro",
+                  "format": "youtube"
+                }
+              },
+              "Retry": [
+                {
+                  "ErrorEquals": [
+                    "Lambda.TooManyRequestsException",
+                    "Lambda.ServiceException"
+                  ],
+                  "IntervalSeconds": 3,
+                  "MaxAttempts": 4,
+                  "BackoffRate": 2
+                }
+              ],
+              "OutputPath": "$.Payload",
+              "End": true
+            }
+          }
+        }
+      ],
+      "ResultPath": null,
+      "Next": "Assemblages"
+    },
+    "Assemblages": {
+      "Type": "Parallel",
+      "Branches": [
+        {
+          "StartAt": "AssemblageYoutube",
+          "States": {
+            "AssemblageYoutube": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::lambda:invoke",
+              "Parameters": {
+                "FunctionName": "quiz-assembler",
+                "Payload": {
+                  "bucket.$": "$.bucket",
+                  "nom.$": "$.nom",
+                  "sortie": "videos/youtube",
+                  "max": 25
+                }
+              },
+              "Retry": [
+                {
+                  "ErrorEquals": [
+                    "Lambda.TooManyRequestsException",
+                    "Lambda.ServiceException"
+                  ],
+                  "IntervalSeconds": 3,
+                  "MaxAttempts": 4,
+                  "BackoffRate": 2
+                }
+              ],
+              "OutputPath": "$.Payload",
+              "End": true
+            }
+          }
+        },
+        {
+          "StartAt": "AssemblageSansVoix",
+          "States": {
+            "AssemblageSansVoix": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::lambda:invoke",
+              "Parameters": {
+                "FunctionName": "quiz-assembler",
+                "Payload": {
+                  "bucket.$": "$.bucket",
+                  "nom.$": "$.nom",
+                  "dossier": "clips-sans-voix",
+                  "sortie": "videos/sans-voix",
+                  "max": 25
+                }
+              },
+              "Retry": [
+                {
+                  "ErrorEquals": [
+                    "Lambda.TooManyRequestsException",
+                    "Lambda.ServiceException"
+                  ],
+                  "IntervalSeconds": 3,
+                  "MaxAttempts": 4,
+                  "BackoffRate": 2
+                }
+              ],
+              "OutputPath": "$.Payload",
+              "End": true
+            }
+          }
+        },
+        {
+          "StartAt": "AssemblageShortP1",
+          "States": {
+            "AssemblageShortP1": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::lambda:invoke",
+              "Parameters": {
+                "FunctionName": "quiz-assembler",
+                "Payload": {
+                  "bucket.$": "$.bucket",
+                  "nom.$": "$.nom",
+                  "dossier": "clips-shorts",
+                  "sortie": "videos/shorts",
+                  "debut": 0,
+                  "max": 10,
+                  "partie": 1
+                }
+              },
+              "Retry": [
+                {
+                  "ErrorEquals": [
+                    "Lambda.TooManyRequestsException",
+                    "Lambda.ServiceException"
+                  ],
+                  "IntervalSeconds": 3,
+                  "MaxAttempts": 4,
+                  "BackoffRate": 2
+                }
+              ],
+              "OutputPath": "$.Payload",
+              "End": true
+            }
+          }
+        },
+        {
+          "StartAt": "AssemblageShortP2",
+          "States": {
+            "AssemblageShortP2": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::lambda:invoke",
+              "Parameters": {
+                "FunctionName": "quiz-assembler",
+                "Payload": {
+                  "bucket.$": "$.bucket",
+                  "nom.$": "$.nom",
+                  "dossier": "clips-shorts",
+                  "sortie": "videos/shorts",
+                  "debut": 10,
+                  "max": 10,
+                  "partie": 2
+                }
+              },
+              "Retry": [
+                {
+                  "ErrorEquals": [
+                    "Lambda.TooManyRequestsException",
+                    "Lambda.ServiceException"
+                  ],
+                  "IntervalSeconds": 3,
+                  "MaxAttempts": 4,
+                  "BackoffRate": 2
+                }
+              ],
+              "OutputPath": "$.Payload",
+              "End": true
+            }
+          }
+        }
+      ],
+      "End": true
+    }
+  }
+}

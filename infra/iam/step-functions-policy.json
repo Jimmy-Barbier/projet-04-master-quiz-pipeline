@@ -1,0 +1,18 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "InvokeLambdasDuPipeline",
+      "Effect": "Allow",
+      "Action": "lambda:InvokeFunction",
+      "Resource": [
+        "arn:aws:lambda:eu-central-1:<ACCOUNT_ID>:function:quiz-generer-voix",
+        "arn:aws:lambda:eu-central-1:<ACCOUNT_ID>:function:quiz-rendu-clip",
+        "arn:aws:lambda:eu-central-1:<ACCOUNT_ID>:function:quiz-assembler",
+        "arn:aws:lambda:eu-central-1:<ACCOUNT_ID>:function:quiz-generer-voix:*",
+        "arn:aws:lambda:eu-central-1:<ACCOUNT_ID>:function:quiz-rendu-clip:*",
+        "arn:aws:lambda:eu-central-1:<ACCOUNT_ID>:function:quiz-assembler:*"
+      ]
+    }
+  ]
+}

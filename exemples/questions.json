@@ -1,0 +1,24 @@
+[
+  {
+    "question": "Quelle est la capitale de l'Australie ?",
+    "choix": [
+      "Sydney",
+      "Canberra",
+      "Melbourne",
+      "Perth"
+    ],
+    "justification": "Canberra est la capitale fédérale de l'Australie depuis 1913.",
+    "bonne": 1
+  },
+  {
+    "question": "Quel fleuve traverse la ville de Lyon avec le Rhône ?",
+    "choix": [
+      "La Garonne",
+      "La Loire",
+      "La Saône",
+      "La Seine"
+    ],
+    "justification": "La Saône rejoint le Rhône à Lyon, au confluent.",
+    "bonne": 2
+  }
+]

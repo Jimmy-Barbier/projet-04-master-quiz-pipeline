@@ -1,0 +1,44 @@
+{
+  "Rules": [
+    {
+      "ID": "expire-clips-7j",
+      "Filter": {
+        "Prefix": "clips/"
+      },
+      "Status": "Enabled",
+      "Expiration": {
+        "Days": 7
+      }
+    },
+    {
+      "ID": "expire-clips-sans-voix-7j",
+      "Filter": {
+        "Prefix": "clips-sans-voix/"
+      },
+      "Status": "Enabled",
+      "Expiration": {
+        "Days": 7
+      }
+    },
+    {
+      "ID": "expire-clips-shorts-7j",
+      "Filter": {
+        "Prefix": "clips-shorts/"
+      },
+      "Status": "Enabled",
+      "Expiration": {
+        "Days": 7
+      }
+    },
+    {
+      "ID": "expire-voix-7j",
+      "Filter": {
+        "Prefix": "voix/"
+      },
+      "Status": "Enabled",
+      "Expiration": {
+        "Days": 7
+      }
+    }
+  ]
+}

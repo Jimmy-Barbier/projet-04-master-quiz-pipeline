@@ -1,0 +1,11 @@
+{
+  "bucket": "<BUCKET>",
+  "questions": "questions/les-animaux.json",
+  "exclure": [
+    4,
+    6,
+    7,
+    14,
+    23
+  ]
+}
